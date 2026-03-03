@@ -1,0 +1,12 @@
+/* Dashboard specific styles - imported via style.css */
+/* This file provides additional styling context for the dashboard */
+
+:root {
+    --primary-color: #6366f1;
+    --success-color: #10b981;
+    --info-color: #3b82f6;
+    --warning-color: #f59e0b;
+    --dark-color: #1f2937;
+    --light-color: #f3f4f6;
+    --border-color: #e5e7eb;
+}

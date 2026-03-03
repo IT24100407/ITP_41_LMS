@@ -1,0 +1,228 @@
+<!-- Footer Fragment -->
+<footer th:fragment="footer" class="footer-modern">
+    <style>
+        .footer-modern {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            color: #cbd5e1;
+            padding: 3rem 0 1rem;
+            margin-top: 4rem;
+            border-top: 1px solid #334155;
+        }
+
+        .footer-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section {
+            flex: 1;
+        }
+
+        .footer-brand {
+            color: #7c3aed;
+            font-size: 1.4rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .footer-brand i {
+            font-size: 1.6rem;
+        }
+
+        .footer-description {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .footer-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #f1f5f9;
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .footer-links {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .footer-links li {
+            margin: 0;
+        }
+
+        .footer-links a {
+            color: #94a3b8;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .footer-links a:hover {
+            color: #7c3aed;
+            transform: translateX(4px);
+        }
+
+        .footer-links i {
+            font-size: 0.85rem;
+            width: 16px;
+        }
+
+        .footer-contact {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .footer-contact li {
+            color: #94a3b8;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.9rem;
+        }
+
+        .footer-contact i {
+            color: #7c3aed;
+            width: 16px;
+            text-align: center;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid #334155;
+            padding-top: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .footer-copyright {
+            color: #64748b;
+            font-size: 0.85rem;
+            margin: 0;
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .social-link {
+            color: #7c3aed;
+            font-size: 1.2rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(124, 58, 237, 0.1);
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .social-link:hover {
+            background: #7c3aed;
+            color: white;
+            transform: translateY(-3px);
+        }
+
+        @media (max-width: 768px) {
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .footer-modern {
+                padding: 2rem 0 1rem;
+                margin-top: 2rem;
+            }
+        }
+    </style>
+
+    <div class="footer-container">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3 class="footer-brand">
+                    <i class="fas fa-graduation-cap"></i> EduHub
+                </h3>
+                <p class="footer-description">
+                    Streamline your learning experience with an intuitive Learning Management System designed for students and educators.
+                </p>
+            </div>
+
+            <div class="footer-section">
+                <h4 class="footer-title"><i class="fas fa-link"></i> Quick Links</h4>
+                <ul class="footer-links">
+                    <li><a th:href="@{/dashboard}"><i class="fas fa-home"></i> Dashboard</a></li>
+                    <li><a th:href="@{/schedules}"><i class="fas fa-calendar"></i> Schedules</a></li>
+                    <li><a th:href="@{/materials}"><i class="fas fa-book"></i> Materials</a></li>
+                    <li><a th:href="@{/exams}"><i class="fas fa-file-alt"></i> Exams</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h4 class="footer-title"><i class="fas fa-info-circle"></i> Resources</h4>
+                <ul class="footer-links">
+                    <li><a th:href="@{/profile}"><i class="fas fa-user"></i> My Profile</a></li>
+                    <li><a th:href="@{/announcements}"><i class="fas fa-bell"></i> Announcements</a></li>
+                    <li><a href="#"><i class="fas fa-file-alt"></i> Terms of Service</a></li>
+                    <li><a href="#"><i class="fas fa-shield-alt"></i> Privacy Policy</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h4 class="footer-title"><i class="fas fa-phone"></i> Contact</h4>
+                <ul class="footer-contact">
+                    <li><i class="fas fa-envelope"></i> support@eduhub.com</li>
+                    <li><i class="fas fa-phone"></i> +94 11 234 5678</li>
+                    <li><i class="fas fa-map-marker-alt"></i> Colombo, Sri Lanka</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p class="footer-copyright">
+                &copy; <span th:text="${#dates.year(#dates.createNow())}">2026</span> EduHub. All rights reserved.
+            </p>
+            <div class="footer-social">
+                <a href="#" class="social-link"><i class="fab fa-facebook"></i></a>
+                <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="social-link"><i class="fab fa-linkedin"></i></a>
+            </div>
+        </div>
+    </div>
+</footer>

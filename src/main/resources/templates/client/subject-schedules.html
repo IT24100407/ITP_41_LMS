@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subject-wise Schedules - EduHub</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f5f7fa;
+            color: #333;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+            box-shadow: 0 2px 15px rgba(102, 126, 234, 0.3);
+            padding: 1rem 0;
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .navbar-nav .nav-link {
+            margin: 0 5px;
+            padding: 0.5rem 1rem !important;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+
+        .navbar-nav .nav-link:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .navbar-nav .nav-link.active {
+            background: rgba(255, 255, 255, 0.3);
+            font-weight: 600;
+        }
+
+        .page-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 0;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
+        }
+
+        .page-header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .page-header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .subject-tabs {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .subject-tab {
+            padding: 12px 25px;
+            border: 2px solid #ddd;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .subject-tab:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .subject-tab.active {
+            color: white;
+            border-color: #667eea;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .subject-tab.chemistry.active {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            border-color: #43e97b;
+        }
+
+        .subject-tab.physics.active {
+            background: linear-gradient(135deg, #f5576c 0%, #f093fb 100%);
+            border-color: #f5576c;
+        }
+
+        .schedule-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            border-left: 5px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .schedule-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        .schedule-card.maths {
+            border-left-color: #667eea;
+        }
+
+        .schedule-card.chemistry {
+            border-left-color: #43e97b;
+        }
+
+        .schedule-card.physics {
+            border-left-color: #f5576c;
+        }
+
+        .schedule-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 15px;
+        }
+
+        .schedule-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .schedule-type-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-theory {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .badge-paper {
+            background: #f3e5f5;
+            color: #7b1fa2;
+        }
+
+        .badge-revision {
+            background: #e8f5e9;
+            color: #388e3c;
+        }
+
+        .schedule-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .detail-label {
+            font-size: 12px;
+            color: #999;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .detail-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .online-banner {
+            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+            border: 1px solid #ffb74d;
+            border-radius: 6px;
+            padding: 10px 15px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #f57c00;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .empty-state i {
+            font-size: 64px;
+            color: #ddd;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .empty-state p {
+            color: #999;
+            font-size: 16px;
+        }
+
+        .footer {
+            background: #f9f9f9;
+            padding: 30px 0;
+            margin-top: 50px;
+            border-top: 1px solid #eee;
+        }
+
+        .footer p {
+            margin: 0;
+            color: #666;
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .schedule-details {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .subject-tabs {
+                gap: 10px;
+            }
+
+            .subject-tab {
+                padding: 10px 15px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <!-- Navigation Bar -->
+    <th:block th:replace="~{fragments/navbar :: navbar(activePage='schedules')}"></th:block>
+
+    <!-- Page Header -->
+    <div class="page-header" style="margin-top: 70px;">
+        <div class="container">
+            <h1><i class="fas fa-book-open me-2"></i>Subject-wise Schedules</h1>
+            <p>Explore class schedules for all available subjects</p>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container" style="padding-bottom: 50px;">
+        
+        <!-- Subject Tabs -->
+        <div class="subject-tabs">
+            <button class="subject-tab maths active" onclick="showSubject('maths', this)">
+                <i class="fas fa-sum me-2"></i>Combine Mathematics
+            </button>
+            <button class="subject-tab chemistry" onclick="showSubject('chemistry', this)">
+                <i class="fas fa-flask-vial me-2"></i>Chemistry
+            </button>
+            <button class="subject-tab physics" onclick="showSubject('physics', this)">
+                <i class="fas fa-atom me-2"></i>Physics
+            </button>
+        </div>
+
+        <!-- Combine Mathematics Schedules -->
+        <div id="maths-section" class="subject-section">
+            <div id="maths-content" class="schedules-container">
+                <div class="empty-state">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Loading Combine Mathematics schedules...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chemistry Schedules -->
+        <div id="chemistry-section" class="subject-section" style="display: none;">
+            <div id="chemistry-content" class="schedules-container">
+                <div class="empty-state">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Loading Chemistry schedules...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Physics Schedules -->
+        <div id="physics-section" class="subject-section" style="display: none;">
+            <div id="physics-content" class="schedules-container">
+                <div class="empty-state">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Loading Physics schedules...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container text-center">
+            <p>&copy; 2024 EduHub - Learning Management System. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Load schedules for all subjects on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadSubjectSchedules('maths', 1);
+            loadSubjectSchedules('chemistry', 2);
+            loadSubjectSchedules('physics', 3);
+        });
+
+        function showSubject(subject, button) {
+            // Hide all sections
+            document.querySelectorAll('.subject-section').forEach(section => {
+                section.style.display = 'none';
+            });
+
+            // Remove active class from all buttons
+            document.querySelectorAll('.subject-tab').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Show selected section and highlight button
+            document.getElementById(subject + '-section').style.display = 'block';
+            button.classList.add('active');
+        }
+
+        function loadSubjectSchedules(subject, teacherId) {
+            const contentId = subject + '-content';
+            const container = document.getElementById(contentId);
+
+            // Fetch schedules for this teacher (subject)
+            fetch(`/api/public/schedules/teacher/${teacherId}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch schedules');
+                    }
+                    return response.json();
+                })
+                .then(schedules => {
+                    if (!schedules || schedules.length === 0) {
+                        container.innerHTML = `
+                            <div class="empty-state">
+                                <i class="fas fa-calendar-times"></i>
+                                <h5>No Schedules Available</h5>
+                                <p>There are currently no ${subject} classes scheduled.</p>
+                            </div>
+                        `;
+                        return;
+                    }
+
+                    // Group schedules by date
+                    const groupedSchedules = groupSchedulesByDate(schedules);
+
+                    let html = '';
+                    for (const [date, dateSchedules] of Object.entries(groupedSchedules)) {
+                        html += `<div style="margin-bottom: 30px;">`;
+                        html += `<h5 style="color: #667eea; margin-bottom: 15px; font-weight: 700;">
+                                    <i class="fas fa-calendar-alt me-2"></i>${formatDateHeader(date)}
+                                </h5>`;
+
+                        dateSchedules.forEach(schedule => {
+                            const badgeClass = getBadgeClass(schedule.classType);
+                            const onlineHtml = schedule.isOnlineClass ? 
+                                `<div class="online-banner">
+                                    <i class="fas fa-video"></i>
+                                    <strong>${schedule.onlinePlatform}</strong>
+                                    <a href="${schedule.meetLink}" target="_blank" style="color: #f57c00; text-decoration: underline;">Join Meeting</a>
+                                </div>` : '';
+
+                            html += `
+                                <div class="schedule-card ${subject}">
+                                    <div class="schedule-header">
+                                        <div class="schedule-title">${schedule.className}</div>
+                                        <span class="schedule-type-badge ${badgeClass}">
+                                            ${schedule.classType}
+                                        </span>
+                                    </div>
+                                    ${onlineHtml}
+                                    <div class="schedule-details">
+                                        <div class="detail-item">
+                                            <span class="detail-label"><i class="fas fa-clock me-1"></i>Time</span>
+                                            <span class="detail-value">${schedule.scheduleTime}</span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <span class="detail-label"><i class="fas fa-building me-1"></i>Center</span>
+                                            <span class="detail-value">${schedule.educationCenterName}</span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <span class="detail-label"><i class="fas fa-tag me-1"></i>Grade</span>
+                                            <span class="detail-value">${schedule.grade}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        });
+
+                        html += `</div>`;
+                    }
+
+                    container.innerHTML = html;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-exclamation-triangle" style="color: #f5576c;"></i>
+                            <h5>Error Loading Schedules</h5>
+                            <p>An error occurred while loading ${subject} schedules. Please try again later.</p>
+                        </div>
+                    `;
+                });
+        }
+
+        function groupSchedulesByDate(schedules) {
+            return schedules.reduce((grouped, schedule) => {
+                const date = schedule.scheduleDate;
+                if (!grouped[date]) {
+                    grouped[date] = [];
+                }
+                grouped[date].push(schedule);
+                return grouped;
+            }, {});
+        }
+
+        function formatDateHeader(dateString) {
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString('en-US', options);
+        }
+
+        function getBadgeClass(classType) {
+            if (classType.includes('Theory')) return 'badge-theory';
+            if (classType.includes('Paper')) return 'badge-paper';
+            if (classType.includes('Revision')) return 'badge-revision';
+            return 'badge-theory';
+        }
+    </script>
+</body>
+</html>

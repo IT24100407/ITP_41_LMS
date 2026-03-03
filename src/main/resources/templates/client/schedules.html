@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schedules - EduHub</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f5f7fa;
+            color: #333;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+            box-shadow: 0 2px 15px rgba(102, 126, 234, 0.3);
+            padding: 1rem 0;
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .navbar-nav .nav-link {
+            margin: 0 5px;
+            padding: 0.5rem 1rem !important;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+
+        .navbar-nav .nav-link:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .navbar-nav .nav-link.active {
+            background: rgba(255, 255, 255, 0.3);
+            font-weight: 600;
+        }
+
+        .page-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 0;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
+        }
+
+        .page-header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .page-header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .container {
+            margin-top: 30px;
+        }
+
+        .filter-box {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            display: flex;
+            gap: 15px;
+            align-items: flex-end;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .filter-group label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .filter-group select,
+        .filter-group input {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .filter-group select:focus,
+        .filter-group input:focus {
+            border-color: #667eea;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .filter-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .schedules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .schedule-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .schedule-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+        }
+
+        .schedule-card-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+        }
+
+        .schedule-card-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .schedule-card-type {
+            display: inline-block;
+            padding: 5px 12px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .schedule-card-body {
+            padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .schedule-info-item {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .schedule-info-icon {
+            font-size: 18px;
+            color: #667eea;
+            min-width: 25px;
+            text-align: center;
+            margin-top: 2px;
+        }
+
+        .schedule-info-content {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .schedule-info-label {
+            font-size: 11px;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        .schedule-info-value {
+            font-size: 15px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .schedule-card-footer {
+            padding: 0 20px 20px 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-join {
+            flex: 1;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-join:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            text-decoration: none;
+            color: white;
+        }
+
+        .btn-details {
+            padding: 10px 15px;
+            background: #f5f7fa;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            cursor: pointer;
+            color: #667eea;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-details:hover {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .online-badge {
+            background: #fff3e0;
+            color: #f57c00;
+            padding: 8px 12px;
+            border-radius: 6px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .in-person-badge {
+            background: #e8f5e9;
+            color: #388e3c;
+            padding: 8px 12px;
+            border-radius: 6px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            grid-column: 1 / -1;
+        }
+
+        .empty-state i {
+            font-size: 72px;
+            color: #ddd;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .empty-state h3 {
+            color: #999;
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        .empty-state p {
+            color: #bbb;
+            font-size: 14px;
+        }
+
+        .subject-tabs-container {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .subject-tab-btn {
+            padding: 12px 25px;
+            border: 2px solid #ddd;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .subject-tab-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .subject-tab-btn.active {
+            color: white;
+            border-color: #667eea;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .subject-tab-btn.chemistry.active {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            border-color: #43e97b;
+        }
+
+        .subject-tab-btn.physics.active {
+            background: linear-gradient(135deg, #f5576c 0%, #f093fb 100%);
+            border-color: #f5576c;
+        }
+
+        .schedule-card.maths {
+            border-top: 4px solid #667eea;
+        }
+
+        .schedule-card.chemistry {
+            border-top: 4px solid #43e97b;
+        }
+
+        .schedule-card.physics {
+            border-top: 4px solid #f5576c;
+        }
+
+        .subject-section {
+            display: none;
+        }
+
+        .subject-section.active {
+            display: block;
+        }
+
+        .schedule-table {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            margin-bottom: 40px;
+        }
+
+        .schedule-table-responsive {
+            overflow-x: auto;
+        }
+
+        .schedule-table table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0;
+        }
+
+        .schedule-table thead {
+            background: #f5f7fa;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .schedule-table thead th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: #333;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .schedule-table tbody td {
+            padding: 15px;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 14px;
+        }
+
+        .schedule-table tbody tr:hover {
+            background: #f9f9f9;
+        }
+
+        @media (max-width: 768px) {
+            .schedules-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .filter-box {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .filter-group {
+                width: 100%;
+            }
+
+            .filter-group select,
+            .filter-group input {
+                width: 100%;
+            }
+
+            .filter-btn {
+                width: 100%;
+            }
+
+            .page-header h1 {
+                font-size: 24px;
+            }
+
+            .schedule-card-header {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <th:block th:replace="~{fragments/navbar :: navbar(activePage='schedules')}"></th:block>
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="container">
+            <h1><i class="fas fa-calendar-alt me-3"></i>Class Schedules</h1>
+            <p>View all upcoming classes and join online sessions</p>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Subject Tabs -->
+        <div class="subject-tabs-container">
+            <button class="subject-tab-btn maths active" onclick="switchSubject('maths', this)">
+                <i class="fas fa-sum"></i>Combine Mathematics
+            </button>
+            <button class="subject-tab-btn chemistry" onclick="switchSubject('chemistry', this)">
+                <i class="fas fa-flask-vial"></i>Chemistry
+            </button>
+            <button class="subject-tab-btn physics" onclick="switchSubject('physics', this)">
+                <i class="fas fa-atom"></i>Physics
+            </button>
+        </div>
+
+        <!-- Filter Section -->
+        <div class="filter-box">
+            <div class="filter-group" style="flex: 1; min-width: 200px;">
+                <label for="filterType">Class Type</label>
+                <select id="filterType" onchange="filterSchedules()">
+                    <option value="">All Classes</option>
+                    <option value="Theory Class">Theory Class</option>
+                    <option value="Paper Class">Paper Class</option>
+                    <option value="Revision Class">Revision Class</option>
+                </select>
+            </div>
+            <div class="filter-group" style="flex: 1; min-width: 200px;">
+                <label for="filterMode">Class Mode</label>
+                <select id="filterMode" onchange="filterSchedules()">
+                    <option value="">All Modes</option>
+                    <option value="online">Online Classes</option>
+                    <option value="inperson">Physical Classes</option>
+                </select>
+            </div>
+            <button class="filter-btn" onclick="resetFilters()">
+                <i class="fas fa-redo me-2"></i>Reset Filters
+            </button>
+        </div>
+
+        <!-- MATHS Schedules Section -->
+        <div id="maths-section" class="subject-section active">
+            <div class="schedules-grid" id="mathsSchedulesGrid">
+                <div class="empty-state">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <h3>Loading...</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- CHEMISTRY Schedules Section -->
+        <div id="chemistry-section" class="subject-section">
+            <div class="schedules-grid" id="chemistrySchedulesGrid">
+                <div class="empty-state">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <h3>Loading...</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- PHYSICS Schedules Section -->
+        <div id="physics-section" class="subject-section">
+            <div class="schedules-grid" id="physicsSchedulesGrid">
+                <div class="empty-state">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <h3>Loading...</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const subjectConfig = {
+            maths: { teacherId: 1, name: 'Combine Mathematics', class: 'maths' },
+            chemistry: { teacherId: 2, name: 'Chemistry', class: 'chemistry' },
+            physics: { teacherId: 3, name: 'Physics', class: 'physics' }
+        };
+
+        let currentSubject = 'maths';
+        let allSchedules = {
+            maths: [],
+            chemistry: [],
+            physics: []
+        };
+
+        // Load all subject schedules on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAllSchedules();
+        });
+
+        function loadAllSchedules() {
+            Object.keys(subjectConfig).forEach(subject => {
+                const teacherId = subjectConfig[subject].teacherId;
+                loadSchedulesForSubject(subject, teacherId);
+            });
+        }
+
+        function loadSchedulesForSubject(subject, teacherId) {
+            fetch(`/api/public/schedules/teacher/${teacherId}`)
+                .then(response => response.json())
+                .then(schedules => {
+                    allSchedules[subject] = schedules || [];
+                    renderSubjectSchedules(subject);
+                })
+                .catch(error => {
+                    console.error(`Error loading ${subject} schedules:`, error);
+                    renderErrorState(subject);
+                });
+        }
+
+        function renderSubjectSchedules(subject) {
+            const gridId = subject + 'SchedulesGrid';
+            const container = document.getElementById(gridId);
+            const schedules = allSchedules[subject];
+            const subjectClass = subjectConfig[subject].class;
+
+            if (!schedules || schedules.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-inbox"></i>
+                        <h3>No Schedules Available</h3>
+                        <p>There are no ${subjectConfig[subject].name} classes scheduled at the moment.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            schedules.forEach(schedule => {
+                const onlineBadge = schedule.isOnlineClass ? 
+                    `<div class="online-badge">
+                        <i class="fas fa-video"></i>
+                        <span>${schedule.onlinePlatform}</span>
+                    </div>` : 
+                    `<div class="in-person-badge">
+                        <i class="fas fa-map-marker-alt"></i>
+                        Physical
+                    </div>`;
+
+                const meetLinkHtml = schedule.isOnlineClass && schedule.meetLink ?
+                    `<div class="schedule-info-item">
+                        <div class="schedule-info-icon">
+                            <i class="fas fa-link"></i>
+                        </div>
+                        <div class="schedule-info-content">
+                            <div class="schedule-info-label">Meeting Link</div>
+                            <div class="schedule-info-value">
+                                <a href="${schedule.meetLink}" target="_blank" style="color: #667eea; text-decoration: none;">
+                                    Open Link <i class="fas fa-external-link-alt ms-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>` : '';
+
+                const joinButton = schedule.isOnlineClass && schedule.meetLink ?
+                    `<a href="${schedule.meetLink}" target="_blank" class="btn-join" style="text-decoration: none; color: white;">
+                        <i class="fas fa-video"></i>Join Class
+                    </a>` :
+                    `<button class="btn-join">
+                        <i class="fas fa-map-marker-alt"></i>View Location
+                    </button>`;
+
+                const dateStr = new Date(schedule.scheduleDate).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                });
+
+                const timeStr = schedule.scheduleTime.substring(0, 5);
+
+                html += `
+                    <div class="schedule-card ${subjectClass}" data-type="${schedule.classType}" data-mode="${schedule.isOnlineClass ? 'online' : 'inperson'}">
+                        <div class="schedule-card-header">
+                            <div>
+                                <div class="schedule-card-title">${schedule.className}</div>
+                                <span class="schedule-card-type">${schedule.classType}</span>
+                            </div>
+                            ${onlineBadge}
+                        </div>
+                        <div class="schedule-card-body">
+                            <div class="schedule-info-item">
+                                <div class="schedule-info-icon">
+                                    <i class="fas fa-building"></i>
+                                </div>
+                                <div class="schedule-info-content">
+                                    <div class="schedule-info-label">Education Center</div>
+                                    <div class="schedule-info-value">${schedule.educationCenterName}</div>
+                                </div>
+                            </div>
+
+                            <div class="schedule-info-item">
+                                <div class="schedule-info-icon">
+                                    <i class="fas fa-graduation-cap"></i>
+                                </div>
+                                <div class="schedule-info-content">
+                                    <div class="schedule-info-label">Grade</div>
+                                    <div class="schedule-info-value">${schedule.grade}</div>
+                                </div>
+                            </div>
+
+                            <div class="schedule-info-item">
+                                <div class="schedule-info-icon">
+                                    <i class="fas fa-calendar"></i>
+                                </div>
+                                <div class="schedule-info-content">
+                                    <div class="schedule-info-label">Date</div>
+                                    <div class="schedule-info-value">${dateStr}</div>
+                                </div>
+                            </div>
+
+                            <div class="schedule-info-item">
+                                <div class="schedule-info-icon">
+                                    <i class="fas fa-clock"></i>
+                                </div>
+                                <div class="schedule-info-content">
+                                    <div class="schedule-info-label">Time</div>
+                                    <div class="schedule-info-value">${timeStr}</div>
+                                </div>
+                            </div>
+
+                            ${meetLinkHtml}
+                        </div>
+                        <div class="schedule-card-footer">
+                            ${joinButton}
+                            <button class="btn-details" onclick="toggleDetails(this)">
+                                <i class="fas fa-info-circle"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function renderErrorState(subject) {
+            const gridId = subject + 'SchedulesGrid';
+            const container = document.getElementById(gridId);
+            container.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-exclamation-triangle" style="color: #f5576c;"></i>
+                    <h3>Error Loading Schedules</h3>
+                    <p>Failed to load ${subjectConfig[subject].name} schedules. Please try again later.</p>
+                </div>
+            `;
+        }
+
+        function switchSubject(subject, button) {
+            // Hide all sections
+            document.querySelectorAll('.subject-section').forEach(section => {
+                section.classList.remove('active');
+            });
+
+            // Remove active class from all buttons
+            document.querySelectorAll('.subject-tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Show selected section and highlight button
+            document.getElementById(subject + '-section').classList.add('active');
+            button.classList.add('active');
+            
+            currentSubject = subject;
+            filterSchedules();
+        }
+
+        function filterSchedules() {
+            const typeFilter = document.getElementById('filterType').value;
+            const modeFilter = document.getElementById('filterMode').value;
+            
+            const gridId = currentSubject + 'SchedulesGrid';
+            const cards = document.querySelectorAll(`#${gridId} .schedule-card`);
+
+            cards.forEach(card => {
+                let show = true;
+                
+                if (typeFilter && card.dataset.type !== typeFilter) {
+                    show = false;
+                }
+                
+                if (modeFilter && card.dataset.mode !== modeFilter) {
+                    show = false;
+                }
+                
+                card.style.display = show ? 'flex' : 'none';
+            });
+        }
+
+        function resetFilters() {
+            document.getElementById('filterType').value = '';
+            document.getElementById('filterMode').value = '';
+            filterSchedules();
+        }
+
+        function toggleDetails(button) {
+            const card = button.closest('.schedule-card');
+            card.style.transform = card.style.transform ? '' : 'scale(1.02)';
+        }
+
+        // Active navigation link
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentUrl = window.location.pathname;
+            document.querySelectorAll('.navbar-nav .nav-link').forEach(link => {
+                if (link.getAttribute('href') === currentUrl) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
